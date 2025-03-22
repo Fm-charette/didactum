@@ -16,7 +16,8 @@
     "@mui/x-charts": "^7.28.0",
     "ky": "^1.7.5",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-toastify": "^11.0.5"
   },
   "devDependencies": {
     "@types/react": "latest",
