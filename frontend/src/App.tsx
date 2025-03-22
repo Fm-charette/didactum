@@ -5,31 +5,39 @@ import { useEffect, useState } from "react";
 import ky from "ky";
 import { LineChart } from "@mui/x-charts/LineChart";
 import  Button  from "@mui/material/Button";
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function App() {
   const [data, setData] = useState<any[]>([]);
-
+  const getData = async () => {
+    try {
+      const res = await ky.get('api/metrics');
+      const resToJson = await res.json<any[]>();
+      setData(resToJson);
+    } catch(err) {
+      toast.error(err instanceof Error ? err.message : "Une erreur s'est produite");
+    }
+  }
   useEffect(() => {
-    ky.get("api/metrics").then(async (r) => {
-      setData(await r.json());
-    });
+    getData();
   }, []);
 
   return (
     <Container maxWidth="sm">
       <Box sx={{ my: 4 }}>
         <LineChart
-          xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+          xAxis={[{ data: data.map((item) => item.id) }]}
           series={[
             {
-              data: [2, 5.5, 2, 8.5, 1.5, 5],
+              data: data.map((item) => item.value),
             },
           ]}
-          width={500}
-          height={300}
+          width={1000}
+          height={500}
         />
       </Box>
-      <Button color="primary" >Refresh metrics</Button>
+      <Button color="primary" onClick={() => getData()}>Refresh metrics</Button>
+      <ToastContainer />
     </Container>
   );
 }
